@@ -1,0 +1,57 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "ch_temp_book_a_ready",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "paths": {
+      "code_rotation/anim_x_y/anim_equip_x_y_scale_x": {
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": 15
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": -5
+            }
+          ]
+        }
+      },
+      "code_rotation/anim_x_y/anim_hand_left_x_y": {
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": 20
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": -10
+            }
+          ]
+        }
+      },
+      "anim_hand_right_active": {
+        "props": {
+          "active": [
+            {
+              "frame": 0,
+              "value": false
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}

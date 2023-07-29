@@ -1,0 +1,15 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_shield_player_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "d34fdbbb-08ab-4977-a2bb-0093c3a396f8"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {}
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_img_greyable_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "0eec3fbc-962d-4e97-b70e-80a4ed775de5"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "greyWeight": 1
+      }
+    }
+  }
+}

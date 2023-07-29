@@ -1,0 +1,70 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        offset: {value: 1}
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  uniform eff_circle_angulation_add_mul {
+    float offset;
+  };
+
+  void main () { 
+    vec4 o = vec4(1, 1, 1, 1);
+    CCTexture(texture, v_uv0, o);
+    vec2 rel = (v_uv0 - vec2 (0.5, 0.5)) * 2.0;
+    float len = sqrt (pow (rel.x, 2.0) + pow (rel.y, 2.0));
+    float cos = rel.x / len;
+    float sin = rel.y / len;
+    float rate = o.a * clamp (1.4142 - len, 0.0, 1.0);
+    rate = sqrt (rate);
+    vec4 c = vec4 (- cos * offset / 255.0 * rate, - sin * offset / 255.0 * rate, 0, 1);
+    c *= v_color;
+    gl_FragColor = vec4 (c.rgb, abs (clamp (c.r, 0.0, 1.0)) + abs (clamp (c.g, 0.0, 1.0)));
+  }
+}%

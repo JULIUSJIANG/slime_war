@@ -1,0 +1,20 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_sun_light_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "e6bc9273-7cd2-4846-9c51-db5b70fa3563"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "textureNoise": {
+          "__uuid__": "2f3c1e25-cba8-4683-9afc-83faeae84bb6"
+        }
+      }
+    }
+  }
+}

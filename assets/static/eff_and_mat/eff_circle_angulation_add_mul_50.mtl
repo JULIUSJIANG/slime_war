@@ -1,0 +1,18 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_circle_angulation_add_mul_255",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "ed079c28-1510-417a-9e01-4495d0c85fea"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "offset": 50
+      }
+    }
+  }
+}

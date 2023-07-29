@@ -1,0 +1,21 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_blood_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "27e4f558-f2f9-4275-a0dd-294a6aa294c6"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "texNoise": {
+          "__uuid__": "2f3c1e25-cba8-4683-9afc-83faeae84bb6"
+        },
+        "loopTime": 2000
+      }
+    }
+  }
+}

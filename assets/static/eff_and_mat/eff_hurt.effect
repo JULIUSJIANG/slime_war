@@ -1,0 +1,132 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        enabledTime: { value: 0.0 }
+        msFadeIn: { value: 20.0 }
+        msFadeOut: { value: 1200.0 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  #define PI 3.1415
+
+  uniform eff_bring {
+    float enabledTime;
+    float msFadeIn;
+    float msFadeOut;
+  };
+
+  float atan2 (float y, float x) {
+    return atan (y / x) + step (x, 0.0) * step (0.0, y) * PI - step (x, 0.0) * step (y, 0.0) * PI;
+  }
+
+  void main () {
+    float time = enabledTime;
+
+    // 爆炸半径 - 起始
+    float radiusBoomStart = 0.6;
+    // 爆炸半径 - 结束
+    float radiusBoomEnd = 0.2;
+
+    // 线长度 - 起始
+    float lineStart = sqrt (2.0 * pow (0.5, 4.0));
+    // 线长度 - 结束
+    float lineEnd = lineStart;
+
+    // 淡入比率
+    float rateIn = clamp (time / msFadeIn, 0.0, 1.0);
+    // 淡出比例 1 -> 0
+    float rateOut = clamp ((msFadeOut - time) / msFadeOut, 0.0, 1.0);
+
+    // 加速渐变
+    float rateOutTransform = pow (rateOut, 4.0);
+
+    // 半径 - 爆炸 - 由大到小
+    float radiusBoom = radiusBoomStart + (radiusBoomEnd - radiusBoomStart) * (1.0 - rateOutTransform);
+
+    // 半径 - 辐射 - 由小到大
+    float radiusLine = lineStart + (lineEnd - lineStart) * (1.0 - rateOutTransform);
+
+    vec2 rel = v_uv0 - vec2 (0.5);
+    float distance = sqrt (dot (rel, rel));
+
+    // 0 - 2 PI
+    float angle = atan2 (rel.y, rel.x) + PI;
+    // 0 - 1
+    float x = (mod (angle, PI / 2.0)) / (PI / 2.0);
+    // 0 - 1
+    float y = 1.0 - abs (x - 0.5) / 0.5;
+    // 变为曲线
+    y = pow (y, 4.0);
+    // 对角长度
+    y *= radiusLine;
+
+    // 与爆炸中心调和
+    y += step (y, radiusBoom) * (radiusBoom - y) * 0.5;
+
+    // 从内到外的渐变
+    float opacityStar = clamp ((y - distance) / distance, 0.0, 1.0);
+    opacityStar = clamp (opacityStar, 0.0, 1.0);
+
+    vec4 o = vec4(1, 1, 1, 1);
+    CCTexture(texture, v_uv0, o);
+    // 内外渐变
+    o.a *= opacityStar;
+    // 淡入
+    o.a *= rateIn;
+    // 淡出
+    o.a *= rateOut;
+    // 高亮些
+    o.a = pow (o.a, 0.5);
+
+    o.a = clamp (o.a, 0.0, 1.0);
+    // 最终着色
+    o *= v_color;
+    // o *= vec4 (v_color.r * 0.5 + 0.5, v_color.g * 0.5 + 0.5, v_color.b * 0.5 + 0.5, v_color.a);
+    gl_FragColor = o.rgba;
+  }
+}%

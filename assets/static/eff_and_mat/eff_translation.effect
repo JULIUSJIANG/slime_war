@@ -1,0 +1,91 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        borderRate: { value: 0.7 }
+        enabledTime: { value: 0.0 }
+        loopTime: { value: 1000.0 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  #define PI 3.1415
+
+  uniform eff_water_ball {
+    float borderRate;
+    float enabledTime;
+    float loopTime;
+  };
+
+  float atan2 (float y, float x) {
+    return atan (y / x) + step (x, 0.0) * step (0.0, y) * PI - step (x, 0.0) * step (y, 0.0) * PI;
+  }
+
+  void main () {
+    vec2 rel = (v_uv0 - vec2 (0.5));
+    float distance = sqrt (dot (rel, rel));
+
+    float timeRate = clamp (enabledTime / loopTime, 0.0, 1.0);
+
+    float transX = atan2 (rel.y, rel.x);
+    float transY = cos (4.0 * transX);
+    float borderRateScale = borderRate * timeRate;
+    float finalY = 0.5 * (1.0 - borderRateScale) + 0.5 * borderRateScale * (transY + 1.0) / 2.0;
+
+    float opacityY = step (distance, finalY);
+    float opacityBorder = distance / finalY;
+    opacityBorder = pow (opacityBorder, 8.0);
+ 
+    float opacityTimeRate = 1.0 - timeRate;
+    opacityTimeRate = pow (opacityTimeRate, 2.0);
+ 
+    vec4 colorTex = texture (texture, v_uv0);
+    colorTex.a *= opacityY;
+    colorTex.a *= opacityTimeRate;
+    colorTex *= mix (v_color, vec4 (1), opacityBorder);
+    gl_FragColor = colorTex.rgba;
+  }
+}%

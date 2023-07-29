@@ -1,0 +1,20 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_acid_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "2047f5cf-019b-4817-a1e1-d964b6278010"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "offsetRate": 0.5,
+        "enabledTime": 0,
+        "loopTime": 200
+      }
+    }
+  }
+}

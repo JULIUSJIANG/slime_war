@@ -1,0 +1,88 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        prickleCount: { value: 4.0 }
+        prickleLen: { value: 0.5 }
+        circle: {value: 1000.0}
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  uniform eff_prickle {
+    // 尖刺数量
+    float prickleCount;
+    // 尖刺长度
+    float prickleLen;
+    // 周期
+    float circle;
+    // 已显示的时长
+    float enabledTime;
+  };
+
+  void main () {
+    vec4 o = vec4(1, 1, 1, 1);
+    CCTexture(texture, v_uv0, o);
+    vec2 rel = (v_uv0 - vec2 (0.5, 0.5)) * 2.0;
+    float len = sqrt (pow (rel.x, 2.0) + pow (rel.y, 2.0));
+    float cosVal = rel.x / len;
+    float sinVal = rel.y / len;
+    float angle = atan (sinVal / cosVal);
+    angle += mod (enabledTime, circle) / circle * 3.14 * 2.0;
+    angle *= prickleCount;
+    float rate = sin (angle);
+    rate = pow (rate, 16.0);
+    float borderTop = 1.0 - prickleLen + rate * prickleLen;
+    float borderBottom = 1.0 - prickleLen - rate * prickleLen;
+    o.a *= step (len, borderTop);
+    o.a *= step (borderBottom, len);
+    float opacityForY = (1.0 - sinVal) / 2.0;
+    opacityForY = pow (opacityForY, 2.0);
+    o.a *= opacityForY;
+    o *= v_color;
+    gl_FragColor = o.rgba;
+  }
+}%

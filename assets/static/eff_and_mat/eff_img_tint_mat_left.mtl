@@ -1,0 +1,26 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_img_tint_mat_left",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "94390fad-27ed-4143-929d-82f2a3247ad5"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "cutY": 0,
+        "height": 540,
+        "textureMask": {
+          "__uuid__": "4095187d-b82a-489f-859e-566228850d49"
+        },
+        "texWidth": 1170,
+        "texHeight": 540,
+        "cutX": 155,
+        "width": 310
+      }
+    }
+  }
+}

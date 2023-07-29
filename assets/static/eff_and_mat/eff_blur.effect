@@ -1,0 +1,100 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        texWidth: {
+            value: 1386.0
+        }
+        texHeight: {
+            value: 640.0
+        }
+}%
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+
+    pos = cc_matViewProj * pos;
+
+    v_uv0 = a_uv0;
+
+    v_color = a_color;
+    gl_Position = pos;
+  } 
+}%
+
+CCProgram fs %{
+  precision highp float;
+  #include <cc-global> 
+  #include <alpha-test>
+  in vec4 v_color; 
+
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  // 模糊半径
+  const float blurRadius = 5.0;
+  // 循环左边界
+  const float borderLeft = -blurRadius;
+  // 循环右边界
+  const float borderRight = blurRadius;
+ 
+  // 接收外部变量 
+  uniform EffBlur { 
+    // 分割 
+    float texWidth; 
+    // 周期
+    float texHeight; 
+  };
+
+  void main () {
+    // 步骤二：采样周边像素并应用加权平均值，得出最终像素值;
+    vec4 finalColor = vec4(0, 0, 0, 0);
+
+    // 取色点位置的寄存器
+    vec2 pos = vec2(0, 0);
+
+    // 取点的颜色
+    vec4 color = vec4(0, 0, 0, 0);
+
+    // 模糊的每像素偏移 - 水平
+    float blurOffsetPerpixelHor = 1.0 / texWidth;
+    // 模糊的每像素偏移 - 垂直
+    float blurOffsetPerpixelVer = 1.0 / texHeight; 
+
+    // 体积
+    float volume = (blurRadius + blurRadius - 1.0) * (blurRadius + blurRadius - 1.0) * blurRadius / 3.0;
+    for (float x = borderLeft; x <= borderRight; x++) {
+        for (float y = borderLeft; y <= borderRight; y++) {
+            pos[0] = v_uv0[0] + blurOffsetPerpixelHor * x;
+            pos[1] = v_uv0[1] + blurOffsetPerpixelVer * y;
+            finalColor += texture(texture, pos) * min(blurRadius - abs(x), blurRadius - abs(y)) / volume;
+        }; 
+    };
+
+    gl_FragColor = max (finalColor, texture(texture, v_uv0)) * v_color; 
+  }
+}% 

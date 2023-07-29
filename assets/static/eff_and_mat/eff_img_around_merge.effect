@@ -1,0 +1,146 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+// 描线环绕的核心逻辑 + 转角优化
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        texWidth: { value: 100 }
+        texHeight: { value: 100 }
+        pointSpeed: { value: 0.1 }
+        lineLength: { value: 10 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  // 圆周率
+  #define PI 3.1415
+
+  uniform eff_img_around_merge { 
+    float texWidth;
+    float texHeight;
+    float pointSpeed;
+    float lineLength;
+  };
+
+  float atan2 (float y, float x) {
+    return atan (y / x) + step (x, 0.0) * step (0.0, y) * PI - step (x, 0.0) * step (y, 0.0) * PI;
+  }
+
+  float msToAngle (float msTime) {
+    float tagPosX = texWidth / 2.0;
+    float tagPosY = mod (msTime * pointSpeed, texHeight) + -texHeight / 2.0;
+    float tagAngle = atan2 (tagPosY, tagPosX);
+    return;
+  }
+  
+  void main () {
+    float msTime = cc_time [0] * 1000.0;
+    // 相对中心的像素位置
+    vec2 relVec = (v_uv0 - vec2 (0.5, 0.5)) * vec2 (texWidth, texHeight);
+    float relAngle = atan2 (relVec.y, relVec.x);
+
+    // 总周期
+    float msCircle = (texWidth * 2.0 + texHeight * 2.0) / pointSpeed;
+
+    // 起始角
+    float mergeAngleA = 0.0;
+    // 终点角
+    float mergeAngleB = 0.0;
+
+    // 右循环
+    float rightMS = mod (msTime, msCircle);
+    float rightTagPosX = texWidth / 2.0;
+    float rightMove = pointSpeed * rightMS;
+    float rightTagPosY = rightMove + -texHeight / 2.0 + -lineLength;
+    float rightTagAngleA = atan (rightTagPosY / rightTagPosX);
+    float rightTagAngleB = atan ((rightTagPosY + lineLength) / rightTagPosX);
+    mergeAngleA += step (lineLength, rightMove) * step (rightMove, lineLength + texHeight) * rightTagAngleA;
+    mergeAngleB += step (0.0, rightMove) * step (rightMove, texHeight) * rightTagAngleB;
+
+    // 上循环
+    float topMS = mod (msTime - texHeight / pointSpeed, msCircle);
+    float topMove = pointSpeed * topMS;
+    float topTagPosX = -topMove + texWidth / 2.0 + lineLength;
+    float topTagPosY = texHeight / 2.0;
+    float topTagAngleA = atan2 (topTagPosY, topTagPosX);
+    float topTagAngleB = atan2 (topTagPosY, topTagPosX - lineLength);
+    mergeAngleA += step (lineLength, topMove) * step (topMove, lineLength + texWidth) * topTagAngleA;
+    mergeAngleB += step (0.0, topMove) * step (topMove, texWidth) * topTagAngleB;
+
+    // 左循环
+    float leftMS = mod (msTime - (texHeight + texWidth) / pointSpeed, msCircle);
+    float leftMove = pointSpeed * leftMS;
+    float leftTagPoxX = -texWidth / 2.0;
+    float leftTagPoxY = -leftMove + texHeight / 2.0 + lineLength;
+    float leftAngleA = atan2 (leftTagPoxY, leftTagPoxX);
+    float leftAngleB = atan2 (leftTagPoxY - lineLength, leftTagPoxX);
+    mergeAngleA += step (lineLength, leftMove) * step (leftMove, lineLength + texHeight) * leftAngleA;
+    mergeAngleB += step (0.0, leftMove) * step (leftMove, texHeight) * leftAngleB;
+
+    // 下循环
+    float bottomMS = mod (msTime - (texHeight * 2.0 + texWidth) / pointSpeed, msCircle);
+    float bottomMove = pointSpeed * bottomMS;
+    float bottomTagPoxX = bottomMove - texWidth / 2.0 - lineLength;
+    float bottomTagPosY = -texHeight / 2.0;
+    float bottomTagAngleA = atan2 (bottomTagPosY, bottomTagPoxX);
+    float bottomTagAngleB = atan2 (bottomTagPosY, bottomTagPoxX + lineLength);
+    mergeAngleA += step (lineLength, bottomMove) * step (bottomMove, lineLength + texWidth) * bottomTagAngleA;
+    mergeAngleB += step (0.0, bottomMove) * step (bottomMove, texWidth) * bottomTagAngleB;
+
+    // a、b 区间跨过 PI，+ 2.0 * PI 确保 a < b
+    float isBorderCover = step (mergeAngleB, mergeAngleA);
+    mergeAngleB += isBorderCover * 2.0 * PI;
+    // a、b 越界时候，如果 relAngle 小于 0，+ 2.0 * PI 确保大于 0
+    relAngle += isBorderCover * step (relAngle, 0.0) * 2.0 * PI;
+    float opacity = (relAngle - mergeAngleA) / (mergeAngleB - mergeAngleA);
+    opacity = 1.0 - abs (opacity - 0.5) / 0.5;
+    opacity *= step (mergeAngleA, relAngle) * step (relAngle, mergeAngleB);
+
+    vec4 colorTex = texture (texture, v_uv0);
+    gl_FragColor = colorTex * vec4 (1.0, 1.0, 1.0, opacity) * v_color;
+  }
+}%
+ 

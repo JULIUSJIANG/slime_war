@@ -1,0 +1,18 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_bring_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "7cc7c0fb-69cf-4a5d-9b89-2882da73b665"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "enabledTime": 100
+      }
+    }
+  }
+}

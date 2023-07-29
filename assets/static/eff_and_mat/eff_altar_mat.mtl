@@ -1,0 +1,31 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_altar_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "9ddcf05e-89fb-4b7c-9ad5-817e88b56851"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "colorLight": {
+          "__type__": "cc.Color",
+          "r": 192,
+          "g": 113,
+          "b": 160,
+          "a": 255
+        },
+        "colorDark": {
+          "__type__": "cc.Color",
+          "r": 63,
+          "g": 85,
+          "b": 149,
+          "a": 255
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "bow_ordinary",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "paths": {
+      "translate/rotation": {
+        "props": {
+          "angle": [
+            {
+              "frame": 0,
+              "value": 225
+            }
+          ],
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "translate": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                -10,
+                -5,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "translate/rotation/hand_right": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                -6,
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "translate/rotation/hand_left": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                4,
+                4,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "translate/rotation/container_arrow": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "active": [
+            {
+              "frame": 0,
+              "value": true
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}

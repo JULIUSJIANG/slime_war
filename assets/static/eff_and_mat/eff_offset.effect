@@ -1,0 +1,106 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+  #include <cc-global>
+  #include <cc-local>
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  out vec4 v_dirX;
+  out vec4 v_dirY;
+  out vec4 v_dirZ;
+  out vec4 v_o;
+  out vec3 v_rel;
+  out vec3 v_shadow;
+  out vec3 v_pos;
+  out vec4 v_white;
+
+  void main () {
+    // x 向量
+    vec4 dirX = cc_matWorld * vec4(1, 0, 0, 1);
+
+    // y 向量
+    vec4 dirY = cc_matWorld * vec4(0, 1, 0, 1);
+
+    // z 向量
+    vec4 dirZ = cc_matWorld * vec4(0, 0, 1, 1);
+
+    // 中心位置 o
+    vec4 o = cc_matWorld * vec4(0, 0, 0, 1);
+
+    // 相对位置
+    vec3 rel = a_position - o.xyz;
+
+    // 投影
+    vec3 shadow = vec3(
+      dot(dirX.xyz, rel),
+      dot(dirY.xyz, rel),
+      dot(dirZ.xyz, rel)
+    );
+ 
+    // 常规位置
+    vec4 pos = vec4(shadow + o.xyz, 1);
+    pos = cc_matViewProj * pos;
+
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+
+    v_dirX = dirX;
+    v_dirY = dirY;
+    v_dirZ = dirZ;
+    v_o = o;
+    v_rel = rel;
+    v_shadow = shadow;
+    v_pos = a_position;
+    v_white = cc_matWorldIT * vec4(1, 1, 1, 1);
+  }
+}% 
+ 
+
+CCProgram fs %{
+  precision highp float;
+  #include <alpha-test>
+  #include <texture>
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  in vec4 v_dirX;
+  in vec4 v_dirY;
+  in vec4 v_dirZ;
+  in vec4 v_o;
+  in vec3 v_rel;
+  in vec3 v_shadow;
+  in vec3 v_pos;
+  in vec4 v_white;
+
+  void main () {
+    vec4 colorMain = vec4(1, 1, 1, 1);
+    CCTexture(texture, v_uv0, colorMain);
+    colorMain *= v_color;
+    // gl_FragColor = colorMain.rgba;
+
+    gl_FragColor = v_white;
+  }
+}%

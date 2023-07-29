@@ -1,0 +1,39 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_cure_once_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "cc33e67f-70e9-4bec-93b9-7928be38f42c"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "enabledTime": 0,
+        "loopTime": 1500,
+        "spr1PosX": 0.25,
+        "spr1PosY": 0.625,
+        "spr1Width": 0.25,
+        "spr1Height": 0.25,
+        "spr1Size": 0.1,
+        "spr1OffsetLoop": 0.25,
+        "spr2PosX": 0.75,
+        "spr2PosY": 0.875,
+        "spr2Width": 0.25,
+        "spr2Height": 0.25,
+        "spr2Size": 0.1,
+        "spr2OffsetLoop": 0.25,
+        "spr2OffsetMS": 500,
+        "spr3PosX": 0.5,
+        "spr3PosY": 0.375,
+        "spr3Width": 0.25,
+        "spr3Height": 0.25,
+        "spr3Size": 0.1,
+        "spr3OffsetLoop": 0.25,
+        "spr3OffsetMS": 1000
+      }
+    }
+  }
+}

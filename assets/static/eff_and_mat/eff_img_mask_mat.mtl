@@ -1,0 +1,20 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_img_mask_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "d93e35b5-e7b6-4812-bd74-730f55993cce"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "textureMask": {
+          "__uuid__": "8ffb8f8e-82dd-4654-b181-cea7f1e852ec"
+        }
+      }
+    }
+  }
+}

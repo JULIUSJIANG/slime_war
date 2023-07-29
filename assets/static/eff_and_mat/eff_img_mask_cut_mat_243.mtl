@@ -1,0 +1,23 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_img_mask_cut_mat_243",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "f44e7afb-4a12-4f39-a818-0a8f9cc74f3b"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "textureWidth": 1386,
+        "textureHeight": 640,
+        "cutWidth": 310,
+        "cutHeight": 540,
+        "cutX": 263,
+        "cutY": 50
+      }
+    }
+  }
+}

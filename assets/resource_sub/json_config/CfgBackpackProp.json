@@ -1,0 +1,30 @@
+[
+ [
+  10001,
+  "永恒圣盾",
+  "resource_sub/prefab_prop/prop_shield_ui",
+  "resource_sub/prefab_prop/prop_shield_scene",
+  "能够凝聚自然能量以全方位保护物主的盾牌，格挡成功时刷新冷却并造成取决于当前武器等级的伤害，善于利用的话，我即是永恒"
+ ],
+ [
+  10002,
+  "温暖红水晶",
+  "resource_sub/prefab_prop/prop_heart_ui",
+  "resource_sub/prefab_prop/prop_heart_scene",
+  "生命上限+1！\n友谊丰碑下供奉的圣物，用手触摸可以感受到暖意"
+ ],
+ [
+  10003,
+  "星辉蓝水晶",
+  "resource_sub/prefab_prop/prop_star_ui",
+  "resource_sub/prefab_prop/prop_star_scene",
+  "能量上限+50！\n友谊丰碑下供奉的圣物，散发的光芒能够驱散黑暗"
+ ],
+ [
+  20001,
+  "史莱姆原矿",
+  "resource_sub/prefab_prop/prop_coin_gold_ui",
+  "resource_sub/prefab_prop/prop_coin_gold_scene",
+  "史莱姆体内含量丰富的远古矿物，用作炼金强化炉的燃料"
+ ]
+]

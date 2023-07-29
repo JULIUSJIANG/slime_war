@@ -1,0 +1,71 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none 
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        textureNoise: { value: white }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+  uniform sampler2D textureNoise;
+
+  void main () {
+    vec4 colorMain = vec4 (1, 1, 1, 1);
+    CCTexture(texture, v_uv0, colorMain);
+
+    vec4 colorNoise0 = texture2D (textureNoise, v_uv0);
+
+    vec2 rel = (v_uv0 - vec2 (0.5, 0.5)) * 2.0;
+    float len = sqrt (pow (rel.x, 2.0) + pow (rel.y, 2.0));
+    float cosVal = rel.x / len;
+    float sinVal = rel.y / len;
+    colorMain.a *= pow (1.0 - abs (rel.y), 2.0);
+    colorMain.a *= clamp ((1.0 - len) / 1.0, 0.0, 1.0);
+
+    colorMain *= colorNoise0;
+    colorMain *= v_color;
+    gl_FragColor = colorMain.rgba;
+  }
+}%

@@ -1,0 +1,150 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        alphaThreshold: { value: 0.5 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  uniform sampler2D textureBodyEnv;
+
+  uniform sampler2D textureEffBloom0;
+  uniform sampler2D textureEffBloom1;
+  uniform sampler2D textureEffBloom2;
+  uniform sampler2D textureEffBloom3;
+
+  uniform sampler2D textureBodyElement;
+  uniform sampler2D textureEffLight;
+  uniform sampler2D textureEffOffsetAdd;
+  uniform sampler2D textureEffOffsetSub;
+  uniform sampler2D textureBoard;
+
+  uniform eff_screen {
+    float screenWidth;
+    float screenHeight;
+  };
+
+  vec4 bloomJiangTexture (sampler2D tex, vec2 uv, float posRate) {
+    vec4 color = vec4 (0.0, 0.0, 0.0, 0.0);
+    // 上
+    color += texture (tex, uv + vec2 (0, posRate / screenHeight));
+    // 右
+    color += texture (tex, uv + vec2 (posRate / screenWidth, 0));
+    // 下
+    color += texture (tex, uv + vec2 (0, -posRate / screenHeight));
+    // 左
+    color += texture (tex, uv + vec2 (-posRate / screenWidth, posRate / screenHeight));
+    color /= 4.0;
+    return color;
+  }
+
+  vec4 bloomJiang (vec2 uv) {
+    vec4 color = vec4 (0.0, 0.0, 0.0, 0.0);
+    // color += bloomJiangTexture (textureEffBloom0, uv, 1.0);
+    color += bloomJiangTexture (textureEffBloom1, uv, 2.0);
+    // color += bloomJiangTexture (textureEffBloom2, uv, 4.0);
+    // color += bloomJiangTexture (textureEffBloom3, uv, 8.0);
+    // color = vec4 (pow (color.r, 2.0), pow (color.r, 2.0), pow (color.r, 2.0), pow (color.r, 2.0));
+    // color *= 4.0;
+    return color;
+  }
+
+  void main () {
+    vec2 pos = vec2(v_uv0[0], v_uv0[1]);
+
+    // 扭曲颜色 - 正
+    vec4 colorEffOffsetAdd = vec4(1, 1, 1, 1);
+    CCTexture(textureEffOffsetAdd, v_uv0, colorEffOffsetAdd);
+    // 正
+    pos[0] += colorEffOffsetAdd[0] * 255.0 / screenWidth;
+    pos[1] += colorEffOffsetAdd[1] * 255.0 / screenHeight;
+
+    // 扭曲颜色 - 负
+    vec4 colorEffOffsetSub = vec4(1, 1, 1, 1);
+    CCTexture(textureEffOffsetSub, v_uv0, colorEffOffsetSub);
+    // 负
+    pos[0] -= colorEffOffsetSub[0] * 255.0 / screenWidth;
+    pos[1] -= colorEffOffsetSub[1] * 255.0 / screenHeight;
+
+    // 环境颜色
+    vec4 colorBodyEnv = vec4(1, 1, 1, 1);
+    CCTexture(textureBodyEnv, pos, colorBodyEnv);
+
+    // 光晕颜色
+    vec4 colorBloom = bloomJiang (pos);
+
+    // 实体颜色
+    vec4 colorBodyElement = vec4(1, 1, 1, 1);
+    CCTexture(textureBodyElement, pos, colorBodyElement);
+
+    // 光照颜色
+    float lightMax = 0.15;
+    vec4 colorLight = vec4(1, 1, 1, 1);
+    CCTexture(textureEffLight, pos, colorLight);
+    float colorLightAvg = (colorLight.r + colorLight.g + colorLight.b) / 3.0;
+    vec4 colorLightFinal = colorLight * step (colorLightAvg, lightMax) + colorLight * lightMax / colorLightAvg * step (lightMax, colorLightAvg);
+    colorLightFinal = max (colorLightFinal, vec4 (0));
+
+    // 面板颜色
+    vec4 colorBoard = vec4 (1, 1, 1, 1);
+    CCTexture (textureBoard, v_uv0, colorBoard);
+
+    // 环境颜色
+    vec4 color = colorBodyEnv;
+    // 叠加光晕
+    color += colorBloom;
+    // 叠加实体
+    color = colorBodyElement + color * (1.0 - colorBodyElement.a);
+    // 遮罩混合
+    color += colorLightFinal;
+    // 面板颜色
+    color = colorBoard + color * (1.0 - colorBoard.a);
+    // 最终着色
+    color *= v_color;
+
+    // 赋值颜色
+    gl_FragColor = color;
+  }
+}%

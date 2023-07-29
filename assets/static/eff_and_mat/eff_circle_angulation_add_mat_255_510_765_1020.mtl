@@ -1,0 +1,15 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_circle_angulation_add_mat_255_510_765_1020",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "bcc62029-147a-4790-af81-ca2eddfd13e9"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {}
+    }
+  }
+}

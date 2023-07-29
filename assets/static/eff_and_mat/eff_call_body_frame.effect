@@ -1,0 +1,95 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        lightStart: { value: 0.25 }
+        enabledTime: { value: 0.0 }
+        circleTime: { value: 1000.0 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  #define PI 3.1415
+
+  uniform eff_defend {
+    float lightStart;
+    float enabledTime;
+    float circleTime;
+  };
+
+  float atan2 (float y, float x) {
+    return atan (y / x) + step (x, 0.0) * step (0.0, y) * PI - step (x, 0.0) * step (y, 0.0) * PI;
+  }
+
+  void main () {
+    vec2 rel = v_uv0 - vec2 (0.5);
+    // 与中心点距离
+    float distance = sqrt (pow (rel.x, 2.0) + pow (rel.y, 2.0));
+    // 边界中心
+    float borderMiddle = lightStart + (0.5 - lightStart) / 2.0;
+    // 渐变圆环
+    float opacity = (1.0 - abs (distance - borderMiddle) / (borderMiddle - lightStart)) * step (lightStart, distance) * step  (distance, 0.5);
+    // 更正区间
+    opacity = clamp (opacity, 0.0, 1.0);
+
+    vec4 o = vec4(1, 1, 1, 1);
+    CCTexture(texture, v_uv0, o);
+
+    // 着色的不采纳比率
+    float rate = pow (opacity, 2.0);
+    vec4 tinit = rate * vec4 (1) + (1.0 - rate) * v_color;
+
+    // 时间带来的不透明度
+    float opacityTime = enabledTime / circleTime * step (enabledTime, circleTime);
+    opacityTime = abs (opacityTime - 0.5) / 0.5;
+    opacityTime = 1.0 - pow (opacityTime, 0.5);
+
+    o *= tinit;
+    o.a *= opacity;
+    o.a *= opacityTime;
+    gl_FragColor = o.rgba;
+  }
+}%

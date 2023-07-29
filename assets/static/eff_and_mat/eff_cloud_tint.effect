@@ -1,0 +1,78 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        textureNoise: { value: black }
+        alphaThreshold: { value: 0.5 }
+        densityX: { value: 1.386 }
+        densityY: { value: 0.64 }
+        speed: { value: 0.001 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+  uniform sampler2D textureNoise;
+
+  uniform eff_cloud_tint {
+    float densityX;
+    float densityY;
+    float speed;
+  };
+
+  void main () {
+    float ms = cc_time [0] * 1000.0;
+    vec4 colorTex = texture (texture, v_uv0);
+    // 雾气自动右移动
+    vec2 pos = v_uv0 + vec2 (- ms * speed, 0.0);
+    vec4 colorNoise = texture (textureNoise, pos * vec2 (densityX, densityY));
+    // 越白，受到的影响越大
+    float white = (colorTex.r + colorTex.g + colorTex.b) / 3.0;
+    white = pow (white, 4.0);
+    colorNoise *= white;
+    vec4 colorMerge = colorTex + colorNoise;
+    // colorMerge = min (colorMerge, vec4 (0.9, 0.9, 0.9, 1.0));
+    gl_FragColor = colorMerge * v_color;;
+  }
+}%

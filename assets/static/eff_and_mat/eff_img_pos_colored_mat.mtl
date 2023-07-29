@@ -1,0 +1,15 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_img_pos_colored_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "86170941-911d-4573-a5bf-6f32a88c129f"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {}
+    }
+  }
+}

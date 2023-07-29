@@ -1,0 +1,19 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_float_up_down_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "97c4cdab-c7a3-46c6-b08e-99a59ae80529"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "lenBase": 100,
+        "scale": 0.02
+      }
+    }
+  }
+}

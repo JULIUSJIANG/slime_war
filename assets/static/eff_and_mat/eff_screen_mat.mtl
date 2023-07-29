@@ -1,0 +1,17 @@
+{
+  "__type__": "cc.Material",
+  "_name": "screen_eff_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "a4c88cdf-c092-46fd-8a10-884636670c91"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "props": {},
+      "defines": {
+      }
+    }
+  }
+} 

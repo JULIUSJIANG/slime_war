@@ -1,0 +1,109 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "bow_elasticity_right",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.016666666666666666,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "paths": {
+      "translate": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "translate/rotation": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                16,
+                0,
+                0
+              ]
+            }
+          ],
+          "angle": [
+            {
+              "frame": 0,
+              "value": 0
+            }
+          ]
+        }
+      },
+      "translate/rotation/container_arrow": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                -12,
+                0,
+                0
+              ]
+            }
+          ],
+          "active": [
+            {
+              "frame": 0,
+              "value": true
+            },
+            {
+              "frame": 0.016666666666666666,
+              "value": false
+            }
+          ]
+        }
+      },
+      "translate/rotation/hand_left": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                4,
+                -4,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "translate/rotation/hand_right": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                -16,
+                0,
+                0
+              ]
+            },
+            {
+              "frame": 0.016666666666666666,
+              "value": [
+                -20,
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}

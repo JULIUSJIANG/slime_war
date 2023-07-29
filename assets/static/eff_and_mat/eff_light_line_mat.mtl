@@ -1,0 +1,20 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_light_line_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "cab238fa-25f9-47f0-ab4c-c920017de65a"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "borderSize": 0.4,
+        "totalTime": 600,
+        "enabledTime": 600
+      }
+    }
+  }
+}

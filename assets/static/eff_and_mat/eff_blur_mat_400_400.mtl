@@ -1,0 +1,19 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_blur_mat_shield_content",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "442f31b8-cf88-4e3c-8c22-6d90a1fec48c"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "texWidth": 400,
+        "texHeight": 400
+      }
+    }
+  }
+}

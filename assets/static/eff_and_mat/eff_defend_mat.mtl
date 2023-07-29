@@ -1,0 +1,18 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_defend_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "08b04d29-ff0d-4e89-b464-e50a4796beab"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "lightStart": 0.45
+      }
+    }
+  }
+}

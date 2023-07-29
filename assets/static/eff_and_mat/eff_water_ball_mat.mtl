@@ -1,0 +1,21 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_water_ball_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "fd3926dc-955e-44cd-bf45-30244e0c9d98"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "countMul": 4,
+        "enabledTime": 0,
+        "borderRate": 0.15,
+        "loopTime": 200
+      }
+    }
+  }
+}

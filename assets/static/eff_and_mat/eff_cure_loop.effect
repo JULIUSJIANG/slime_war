@@ -1,0 +1,247 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        enabledTime: { value: 500.0 }
+        loopTime: { value: 1000.0 }
+        alphaThreshold: { value: 0.5 }
+        borderSize: { value: 0.0 }
+
+        spr1PosX: { value: 0.0 }
+        spr1PosY: { value: 0.0 }
+        spr1Width: { value: 0.0 }
+        spr1Height: { value: 0.0 }
+        spr1Size: { value: 0.0 }
+        spr1OffsetLoop: { value: 0.0 }
+        spr1OffsetMS: { value: 0.0 }
+
+        spr2PosX: { value: 0.0 }
+        spr2PosY: { value: 0.0 }
+        spr2Width: { value: 0.0 }
+        spr2Height: { value: 0.0 }
+        spr2Size: { value: 0.0 }
+        spr2OffsetLoop: { value: 0.0 }
+        spr2OffsetMS: { value: 0.0 }
+
+        spr3PosX: { value: 0.0 }
+        spr3PosY: { value: 0.0 }
+        spr3Width: { value: 0.0 }
+        spr3Height: { value: 0.0 }
+        spr3Size: { value: 0.0 }
+        spr3OffsetLoop: { value: 0.0 }
+        spr3OffsetMS: { value: 0.0 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  } 
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  uniform eff_cure_loop {
+    float enabledTime;
+    float loopTime;
+    float borderSize;
+
+    float spr1PosX;
+    float spr1PosY;
+    float spr1Width;
+    float spr1Height;
+    float spr1Size;
+    float spr1OffsetLoop;
+    float spr1OffsetMS;
+
+    float spr2PosX;
+    float spr2PosY;
+    float spr2Width;
+    float spr2Height;
+    float spr2Size;
+    float spr2OffsetLoop;
+    float spr2OffsetMS;
+
+    float spr3PosX;
+    float spr3PosY;
+    float spr3Width;
+    float spr3Height;
+    float spr3Size;
+    float spr3OffsetLoop;
+    float spr3OffsetMS;
+  };
+
+  float sprColorRect (
+    vec2 p,
+    
+    float posX,
+    float posY,
+    float width,
+    float height,
+    float loopOffset,
+    float rate
+  ) 
+  {
+    float distanceX = abs (p.x - posX) / width * 2.0;
+    float opacityX = step (distanceX, 1.0) * (1.0 - distanceX);
+
+    posY -= rate * loopOffset;
+    float distanceY = abs (p.y - posY) / height * 2.0;
+    float opacityY = step (distanceY, 1.0) * (1.0 - distanceY);
+
+    float inOut = 1.0 - abs(rate - 0.5) / 0.5;
+
+    return pow (min (opacityX, opacityY), 0.1) * inOut;
+  }
+
+  float spr (
+    vec2 p,
+    
+    float posX,
+    float posY,
+    float width,
+    float height,
+    float size,
+    float loop,
+    float msOffset
+  ) 
+  {
+    msOffset += enabledTime;
+    msOffset = mod (msOffset, loopTime);
+    float rate = msOffset / loopTime;
+    float colorWidth = sprColorRect (
+        p,
+        posX, 
+        posY,
+        width,
+        size,
+        loop,
+        rate
+    );
+    float colorHeight = sprColorRect (
+        p,
+        posX,
+        posY,
+        size,
+        height,
+        loop,
+        rate    
+    );
+    return max (colorWidth, colorHeight);
+  }
+
+  void main () {
+    vec4 colorTex = texture (texture, v_uv0);
+    
+    float colorSpr1Content = spr (
+        v_uv0,
+
+        spr1PosX,
+        spr1PosY,
+        spr1Width,
+        spr1Height,
+        spr1Size,
+        spr1OffsetLoop,
+        spr1OffsetMS
+    );
+    float colorSpr1Bg = spr (
+        v_uv0,
+
+        spr1PosX,
+        spr1PosY,
+        spr1Width + borderSize * 2.0,
+        spr1Height + borderSize * 2.0,
+        spr1Size + borderSize * 2.0,
+        spr1OffsetLoop,
+        spr1OffsetMS
+    );
+
+    float colorSpr2Content = spr (
+        v_uv0,
+
+        spr2PosX,
+        spr2PosY,
+        spr2Width,
+        spr2Height,
+        spr2Size,
+        spr2OffsetLoop,
+        spr2OffsetMS
+    );
+    float colorSpr2Bg = spr (
+        v_uv0,
+
+        spr2PosX,
+        spr2PosY,
+        spr2Width + borderSize * 2.0,
+        spr2Height + borderSize * 2.0,
+        spr2Size + borderSize * 2.0,
+        spr2OffsetLoop,
+        spr2OffsetMS
+    );
+
+    float colorSpr3Content = spr (
+        v_uv0,
+
+        spr3PosX,
+        spr3PosY,
+        spr3Width,
+        spr3Height,
+        spr3Size,
+        spr3OffsetLoop,
+        spr3OffsetMS
+    );
+    float colorSpr3Bg = spr (
+        v_uv0,
+
+        spr3PosX,
+        spr3PosY,
+        spr3Width + borderSize * 2.0,
+        spr3Height + borderSize * 2.0,
+        spr3Size + borderSize * 2.0,
+        spr3OffsetLoop,
+        spr3OffsetMS
+    );
+    float colorSprSumContent = colorSpr1Content + colorSpr2Content + colorSpr3Content;
+    float colorSprSumBg = (colorSpr1Bg + colorSpr2Bg + colorSpr3Bg) * 0.3;
+    float colorSpr = max (colorSprSumContent, colorSprSumBg);
+
+    colorTex.a *= colorSpr;
+    colorTex *= v_color;
+    gl_FragColor = colorTex.rgba;
+  }
+}%

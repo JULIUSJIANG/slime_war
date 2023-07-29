@@ -1,0 +1,22 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_rainbow_round_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "8a22c412-835b-4b2c-962e-c6d6e084f5c7"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "texSize": {
+          "__type__": "cc.Vec2",
+          "x": 200,
+          "y": 200
+        }
+      }
+    }
+  }
+}

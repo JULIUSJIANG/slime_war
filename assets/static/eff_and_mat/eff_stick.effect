@@ -1,0 +1,98 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        
+        traceWidth: {value: 0.2}
+        enabledTime: {value: 0.0}
+        animMaxTime: {value: 200}
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color; 
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  uniform eff_stick {
+    float traceWidth;
+    float enabledTime;
+    float animMaxTime;
+  };
+
+  void main () {
+    vec4 o = vec4(1, 1, 1, 1);
+    CCTexture(texture, v_uv0, o);
+
+    float countPow = 0.25;
+
+    // 顶部边界
+    float borderTop = sin (v_uv0.x * 3.1415);
+    borderTop = pow (borderTop, countPow);
+
+    // 不透明度 - 形状
+    float opacityForShape = 0.0;
+    // 左边界情况
+    opacityForShape += step (v_uv0.x, traceWidth) * step (v_uv0.y, borderTop);
+    // 中间部分情况
+    float middlePosX = (v_uv0.x - traceWidth) / (1.0 - 2.0 * traceWidth);
+    float middlePosY = sin (middlePosX * 3.1415);
+    middlePosY = pow (middlePosY, countPow);
+    middlePosY *= (1.0 - traceWidth);
+    opacityForShape += step (traceWidth, v_uv0.x) * step (v_uv0.x, 1.0 - traceWidth) * step (middlePosY, v_uv0.y) * step (v_uv0.y, borderTop);
+    // 右边界情况
+    opacityForShape += step (1.0 - traceWidth, v_uv0.x) * step (v_uv0.x, 1.0) * step (v_uv0.y, borderTop);
+
+    // 不透明度 - 时间
+    float opacityForTime = (animMaxTime - enabledTime) / animMaxTime;
+
+    // 不透明度 - y 坐标
+    float opacityForY = v_uv0.y;
+    opacityForY = pow (opacityForY, 4.0);
+
+    o.a *= opacityForShape;
+    o.a *= opacityForTime;
+    o.a *= opacityForY;
+    o *= v_color;
+    gl_FragColor = o.rgba;
+  }
+}%

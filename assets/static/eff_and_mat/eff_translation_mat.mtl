@@ -1,0 +1,20 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_translation_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "75d4b4ba-f64f-493f-800e-4f89e0c1bfd1"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "enabledTime": 0,
+        "borderRate": 0.9,
+        "loopTime": 600
+      }
+    }
+  }
+}

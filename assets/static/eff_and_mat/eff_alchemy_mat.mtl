@@ -1,0 +1,31 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_alchemy_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "a6c2f53e-cd9c-4eae-a11d-c3d04d2342d0"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "colorOuter": {
+          "__type__": "cc.Color",
+          "r": 219,
+          "g": 255,
+          "b": 0,
+          "a": 255
+        },
+        "colorInner": {
+          "__type__": "cc.Color",
+          "r": 68,
+          "g": 162,
+          "b": 0,
+          "a": 255
+        }
+      }
+    }
+  }
+}

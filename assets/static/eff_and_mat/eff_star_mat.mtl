@@ -1,0 +1,22 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_star_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "3c6a465f-e6af-4842-bc5b-80127aec468c"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "texSize": {
+          "__type__": "cc.Vec2",
+          "x": 100,
+          "y": 100
+        }
+      }
+    }
+  }
+}

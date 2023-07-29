@@ -1,0 +1,79 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "sword_elasticity_right",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.03333333333333333,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "paths": {
+      "rotation/position_offset": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                -15,
+                15,
+                0
+              ]
+            },
+            {
+              "frame": 0.03333333333333333,
+              "value": [
+                40,
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "rotation/position_offset/angle_offset": {
+        "props": {
+          "angle": [
+            {
+              "frame": 0,
+              "value": -45
+            },
+            {
+              "frame": 0.03333333333333333,
+              "value": -90
+            }
+          ]
+        }
+      },
+      "rotation/position_offset/angle_offset/hand_left": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                0,
+                -10,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "rotation/position_offset/angle_offset/hand_right": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                0,
+                -10,
+                0
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}

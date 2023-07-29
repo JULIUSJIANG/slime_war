@@ -1,0 +1,22 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_ground_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "2ccd65fa-7895-4bb1-8952-620156a69be0"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "texNoise": {
+          "__uuid__": "2f3c1e25-cba8-4683-9afc-83faeae84bb6"
+        },
+        "enabledTime": 1000,
+        "totalTime": 3000
+      }
+    }
+  }
+}

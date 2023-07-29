@@ -1,0 +1,19 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_bubble_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "fdedc247-eda1-4c6c-b5ce-3ba935145442"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "prickleCount": 8,
+        "prickleLen": 0.1
+      }
+    }
+  }
+}

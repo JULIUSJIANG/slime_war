@@ -1,0 +1,86 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        whiteStart: { value: 255.0 }
+        whiteEnd: { value: 765.0 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  uniform eff_white_circle {
+    // 白色起始位置
+    float whiteStart;
+    // 白色结束位置
+    float whiteEnd;
+  };
+
+  void main () { 
+    vec4 whiteColor = vec4 (1, 1, 1, 1);
+    vec2 rel = v_uv0 - vec2 (0.5, 0.5); 
+    float distance = sqrt (rel.x * rel.x + rel.y * rel.y) * 2.0;
+    float whiteStartRate = whiteStart / whiteEnd;
+    float whiteEndRate = 1.0;
+    if (distance < whiteStartRate) {
+        whiteColor.a = 0.0;
+    };
+    if (whiteEndRate < distance) {
+        whiteColor.a = 0.0;
+    };
+    if (whiteStartRate<= distance && distance <= whiteEndRate) {
+        float border = (whiteStartRate + whiteEndRate) / 2.0;
+        whiteColor.a = (1.0 - abs (distance - border) / (whiteEndRate - border));
+    }; 
+
+    vec4 o = vec4(1, 1, 1, 1);
+    CCTexture(texture, v_uv0, o);
+
+    whiteColor.a *= 2.0;
+    o *= whiteColor;
+    o *= v_color;
+    gl_FragColor = o.rgba;
+  }
+}%

@@ -1,0 +1,19 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_loading_mat_1200_800",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "799b8cd4-8c78-49d6-9472-3af0636660ea"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "circle": 1200,
+        "msOffset": 800
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        colorLight: { value: [1.0, 1.0, 1.0, 1.0], editor: {type: color}}
+        colorDark: { value: [1.0, 1.0, 1.0, 1.0], editor: {type: color}}
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  uniform eff_altar {
+    vec4 colorLight;
+    vec4 colorDark;
+  };
+
+  void main () {
+    vec4 colorTex = texture (texture, v_uv0);
+    float colorAvg = (colorTex.r + colorTex.g + colorTex.b) / 3.0;
+    float rateLight = colorAvg;
+    rateLight = step (0.5, rateLight);
+    float rateDark = colorAvg;
+    rateDark = step (rateDark, 0.5);
+    vec3 colorLightVec3 = colorLight.rgb * colorLight.a;
+    vec3 colorDarkVec3 = colorDark.rgb * colorDark.a;
+    vec3 colorLerp = colorLightVec3 * rateLight + colorDarkVec3 * rateDark;
+    float colorLerpPow = 1.0;
+    colorLerp *= vec3 (pow (colorAvg, colorLerpPow), pow (colorAvg, colorLerpPow), pow (colorAvg, colorLerpPow));
+    colorLerp = step (colorAvg, 0.05) * colorTex.rgb + step (0.05, colorAvg) * colorLerp;
+    gl_FragColor = vec4 (colorLerp, colorTex.a) * v_color;
+  }
+}%

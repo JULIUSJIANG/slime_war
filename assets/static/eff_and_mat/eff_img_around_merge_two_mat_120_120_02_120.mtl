@@ -1,0 +1,21 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_img_around_merge_two_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "f71a995a-35ed-45cb-b4f9-2610a0bd6d69"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "texWidth": 120,
+        "texHeight": 120,
+        "pointSpeed": 0.2,
+        "lineLength": 120
+      }
+    }
+  }
+}

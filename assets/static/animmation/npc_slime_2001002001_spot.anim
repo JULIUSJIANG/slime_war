@@ -1,0 +1,41 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "npc_slime_2001002001_spot",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.375,
+  "sample": 8,
+  "speed": 1,
+  "wrapMode": 2,
+  "curveData": {
+    "paths": {
+      "img": {
+        "comps": {
+          "cc.Sprite": {
+            "spriteFrame": [
+              {
+                "frame": 0,
+                "value": {
+                  "__uuid__": "49d7b745-f9f1-4fbd-86fd-10118b66bab0"
+                }
+              },
+              {
+                "frame": 0.125,
+                "value": {
+                  "__uuid__": "d5848af6-6e04-4e25-98d4-1a1058e28599"
+                }
+              },
+              {
+                "frame": 0.25,
+                "value": {
+                  "__uuid__": "fc16677d-c11b-483e-b1b5-0973df3b6a34"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "events": []
+}

@@ -1,0 +1,84 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        enabledTime: { value: 0.0 }
+        totalTime: { value: 1.0 }
+        alphaThreshold: { value: 0.5 }
+        borderSize: { value: 0.0 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  uniform eff_light_line {
+    float borderSize;
+    float enabledTime;
+    float totalTime;
+  };
+
+  void main () {
+    float opacityLeft = v_uv0.x / borderSize;
+    opacityLeft = clamp (opacityLeft, 0.0, 1.0);
+    float opacityRight = 1.0 - (v_uv0.x - (1.0 - borderSize)) / borderSize;
+    opacityRight = clamp (opacityRight, 0.0, 1.0);
+
+    float opacityBottom = v_uv0.y / borderSize;
+    opacityBottom = clamp (opacityBottom, 0.0, 1.0);
+    float opacityTop = 1.0 - (v_uv0.y - (1.0 - borderSize)) / borderSize;
+    opacityTop = clamp (opacityTop, 0.0, 1.0);
+
+    float yPos = -0.5 + enabledTime / totalTime * 2.0;
+    float opacityY = 1.0 - abs(v_uv0.y - yPos) / 0.5;
+    opacityY = clamp (opacityY, 0.0, 1.0);
+
+    float opacity = opacityTop * opacityBottom * opacityLeft * opacityRight * opacityY;
+    float whiteRate = pow (opacity, 2.0);
+
+    vec4 colorTex = texture (texture, v_uv0);
+    colorTex.a *= opacity;
+    colorTex *= whiteRate * vec4 (1) + (1.0 - whiteRate) * v_color;
+    gl_FragColor = colorTex.rgba;
+  }
+}%

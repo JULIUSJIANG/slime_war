@@ -1,0 +1,90 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        split: {
+          value: 1.0
+        }
+        circle: {
+          value: 1.0
+        }
+}%
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+
+    pos = cc_matViewProj * pos;
+
+    v_uv0 = a_uv0;
+
+    v_color = a_color;
+    gl_Position = pos;
+  } 
+}%
+
+CCProgram fs %{
+  precision highp float;
+  #include <cc-global> 
+  #include <alpha-test>
+  in vec4 v_color;
+
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  // 圆周率
+  #define pi 3.1415926;
+  // 半径
+  #define radius 10.0
+
+  // 接收外部变量 
+  uniform Sunshine {
+    // 分割
+    float split;
+    // 周期
+    float circle;
+  };
+
+  float atan2 (float y, float x) {
+    if (x == 0.0) {
+      x = 0.0001; 
+    }; 
+    return atan (y / x);
+  }
+
+  void main () {
+    // 角度
+    vec4 data = texture(texture, v_uv0);
+    float angle = data[2];
+ 
+    // 步骤二：采样周边像素并应用加权平均值，得出最终像素值;
+    vec4 finalColor = vec4(1.0, 1.0, 1.0, 1.0);
+    finalColor[3] *= abs(mod(angle + cc_time[0] / circle, (1.0 / split)) / (1.0 / split) - 0.5);
+    finalColor[3] *= data[3];
+    finalColor *= v_color;
+    gl_FragColor = finalColor;
+  }
+}%   

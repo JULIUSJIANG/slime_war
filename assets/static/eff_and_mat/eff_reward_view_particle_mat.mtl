@@ -1,0 +1,31 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_reward_view_particle_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "4ba46399-0f45-4d29-8f55-32f4179edac6"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "colorInner": {
+          "__type__": "cc.Color",
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 255
+        },
+        "colorOuter": {
+          "__type__": "cc.Color",
+          "r": 255,
+          "g": 230,
+          "b": 0,
+          "a": 255
+        }
+      }
+    }
+  }
+}

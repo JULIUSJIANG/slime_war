@@ -1,0 +1,21 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_protuberant_squr_mat_200 - 001",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "b0525bc7-6e9b-4774-adb5-0b1a7662306c"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "scaleBottom": 0.5,
+        "animMaxTime": 400,
+        "enabledTime": 0,
+        "transformY": 0.5
+      }
+    }
+  }
+}

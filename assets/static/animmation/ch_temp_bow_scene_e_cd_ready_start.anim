@@ -1,0 +1,163 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "ch_0_1_scene_e_cd_ready_start",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.6,
+  "sample": 100,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "paths": {
+      "code_rotation/anim_x_y/anim_armo_x_y_rotation_opacity": {
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": -9
+            },
+            {
+              "frame": 0.1,
+              "value": -9
+            },
+            {
+              "frame": 0.2,
+              "value": -4.5
+            },
+            {
+              "frame": 0.4,
+              "value": -13.5
+            },
+            {
+              "frame": 0.6,
+              "value": -18
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": 5
+            },
+            {
+              "frame": 0.1,
+              "value": 5
+            },
+            {
+              "frame": 0.2,
+              "value": 0
+            }
+          ],
+          "angle": [
+            {
+              "frame": 0,
+              "value": 30
+            },
+            {
+              "frame": 0.1,
+              "value": 30
+            },
+            {
+              "frame": 0.2,
+              "value": 0
+            }
+          ],
+          "opacity": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.1,
+              "value": 0
+            },
+            {
+              "frame": 0.2,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "code_rotation/anim_x_y/anim_hand_left_x_y": {
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": 8
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": -5
+            }
+          ]
+        }
+      },
+      "code_rotation/anim_x_y/anim_hand_right_x_y": {
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": -22.5
+            },
+            {
+              "frame": 0.1,
+              "value": -9
+            },
+            {
+              "frame": 0.2,
+              "value": -4.5
+            },
+            {
+              "frame": 0.4,
+              "value": -13.5
+            },
+            {
+              "frame": 0.6,
+              "value": -18
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.1,
+              "value": 5
+            },
+            {
+              "frame": 0.2,
+              "value": 0
+            }
+          ]
+        }
+      },
+      "code_rotation/anim_x_y": {
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": 18
+            },
+            {
+              "frame": 0.2,
+              "value": 9
+            },
+            {
+              "frame": 0.4,
+              "value": 18
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": 0
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}

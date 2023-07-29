@@ -1,0 +1,97 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "ch_temp_hammer_b_atk",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.6,
+  "sample": 100,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "paths": {
+      "code_rotation/anim_x_y/anim_equip_rotation_x_y": {
+        "props": {
+          "angle": [
+            {
+              "frame": 0,
+              "value": 45
+            },
+            {
+              "frame": 0.6,
+              "value": -135
+            }
+          ],
+          "x": [
+            {
+              "frame": 0,
+              "value": -25
+            },
+            {
+              "frame": 0.6,
+              "value": 25
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": 15
+            },
+            {
+              "frame": 0.6,
+              "value": -15
+            }
+          ]
+        }
+      },
+      "code_rotation/anim_x_y/anim_hand_left_x_y": {
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": -25
+            },
+            {
+              "frame": 0.6,
+              "value": 25
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": 15
+            },
+            {
+              "frame": 0.6,
+              "value": -15
+            }
+          ]
+        }
+      },
+      "code_rotation/anim_x_y/anim_hand_right_x_y": {
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": -25
+            },
+            {
+              "frame": 0.6,
+              "value": 25
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": 15
+            },
+            {
+              "frame": 0.6,
+              "value": -15
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}

@@ -1,0 +1,148 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+// 描线环绕的核心逻辑 + 镜面判断
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+        texWidth: { value: 100 }
+        texHeight: { value: 100 }
+        pointSpeed: { value: 0.1 }
+        lineLength: { value: 10 }
+        lineWidth: { value: 5 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  // 圆周率
+  #define PI 3.1415
+
+  uniform eff_img_around_two { 
+    float texWidth;
+    float texHeight;
+    float pointSpeed;
+    float lineLength;
+    float lineWidth;
+  };
+
+  float atan2 (float y, float x) {
+    return atan (y / x) + step (x, 0.0) * step (0.0, y) * PI - step (x, 0.0) * step (y, 0.0) * PI;
+  }
+
+  float msToAngle (float msTime) {
+    float tagPosX = texWidth / 2.0;
+    float tagPosY = mod (msTime * pointSpeed, texHeight) + -texHeight / 2.0;
+    float tagAngle = atan2 (tagPosY, tagPosX);
+    return;
+  }
+  
+  void main () {
+    float msTime = cc_time [0] * 1000.0;
+    // 相对中心的像素位置
+    vec2 relVec = (v_uv0 - vec2 (0.5, 0.5)) * vec2 (texWidth, texHeight);
+    float relAngle = atan2 (relVec.y, relVec.x);
+    float relAngleMirror = atan2 (-relVec.y, -relVec.x);
+
+    // 总周期
+    float msCircle = (texWidth * 2.0 + texHeight * 2.0) / pointSpeed;
+
+    // 水平展示许可
+    float displayAbleHor = max (step (relVec.x, -texWidth / 2.0 + lineWidth), step (texWidth / 2.0 - lineWidth, relVec.x));
+    // displayAbleHor = 0.0;
+    // 垂直展示许可
+    float displayAbleVer = max (step (relVec.y, -texHeight / 2.0 + lineWidth), step (texHeight / 2.0 - lineWidth, relVec.y));
+    // displayAbleVer = 0.0;
+
+    // 右循环
+    float rightMS = mod (msTime, msCircle);
+    float rightTagPosX = texWidth / 2.0;
+    float rightTagPosY = pointSpeed * rightMS + -texHeight / 2.0 + -lineLength;
+    float rightTagAngleA = atan2 (rightTagPosY, rightTagPosX);
+    float rightTagAngleB = atan2 (rightTagPosY + lineLength, rightTagPosX);
+    float rightOpacity = step (rightTagAngleA, relAngle) * step (relAngle, rightTagAngleB) * (relAngle - rightTagAngleA) / (rightTagAngleB - rightTagAngleA);
+    rightOpacity = max (rightOpacity, step (rightTagAngleA, relAngleMirror) * step (relAngleMirror, rightTagAngleB) * (relAngleMirror - rightTagAngleA) / (rightTagAngleB - rightTagAngleA));
+
+    // 上循环
+    float topMS = mod (msTime - texHeight / pointSpeed, msCircle);
+    float topTagPosX = -pointSpeed * topMS + texWidth / 2.0 + lineLength;
+    float topTagPosY = texHeight / 2.0;
+    float topTagAngleA = atan2 (topTagPosY, topTagPosX);
+    float topTagAngleB = atan2 (topTagPosY, topTagPosX - lineLength);
+    float topOpacity = step (topTagAngleA, relAngle) * step (relAngle, topTagAngleB) * (relAngle - topTagAngleA) / (topTagAngleB - topTagAngleA);
+    topOpacity = max (topOpacity, step (topTagAngleA, relAngleMirror) * step (relAngleMirror, topTagAngleB) * (relAngleMirror - topTagAngleA) / (topTagAngleB - topTagAngleA));
+
+    // 左循环
+    float leftMS = mod (msTime - (texHeight + texWidth) / pointSpeed, msCircle);
+    float leftTagPoxX = -texWidth / 2.0;
+    float leftTagPoxY = -pointSpeed * leftMS + texHeight / 2.0 + lineLength;
+    float leftAngleA = atan2 (leftTagPoxY, leftTagPoxX);
+    float leftAngleB = atan2 (leftTagPoxY - lineLength, leftTagPoxX);
+    // a、b 区间越界
+    float leftIsleftBorderCover = step (leftAngleB, leftAngleA);
+    // 确保 a < b
+    leftAngleB += leftIsleftBorderCover * 2.0 * PI;
+    // 是越界情况，自己又是负数的话，更正为正数
+    float leftRelAngle = relAngle + leftIsleftBorderCover * step (relAngle, 0.0) * 2.0 * PI;
+    float leftOpacity = step (leftAngleA, leftRelAngle) * step (leftRelAngle, leftAngleB) * (leftRelAngle - leftAngleA) / (leftAngleB - leftAngleA);
+    float leftRelAngleMirror = relAngleMirror + leftIsleftBorderCover * step (relAngleMirror, 0.0) * 2.0 * PI;
+    leftOpacity = max (leftOpacity, step (leftAngleA, leftRelAngleMirror) * step (leftRelAngleMirror, leftAngleB) * (leftRelAngleMirror - leftAngleA) / (leftAngleB - leftAngleA));
+
+    // 下循环
+    float bottomMS = mod (msTime - (texHeight * 2.0 + texWidth) / pointSpeed, msCircle);
+    float bottomTagPoxX = pointSpeed * bottomMS - texWidth / 2.0 - lineLength;
+    float bottomTagPosY = -texHeight / 2.0;
+    float bottomTagAngleA = atan2 (bottomTagPosY, bottomTagPoxX);
+    float bottomTagAngleB = atan2 (bottomTagPosY, bottomTagPoxX + lineLength);
+    float bottomOpacity = step (bottomTagAngleA, relAngle) * step (relAngle, bottomTagAngleB) * (relAngle - bottomTagAngleA) / (bottomTagAngleB - bottomTagAngleA);
+    bottomOpacity = max (bottomOpacity, step (bottomTagAngleA, relAngleMirror) * step (relAngleMirror, bottomTagAngleB) * (relAngleMirror - bottomTagAngleA) / (bottomTagAngleB - bottomTagAngleA));
+
+    // 总不透明度
+    float opacityMax = max (max (leftOpacity, rightOpacity) * displayAbleHor, max (topOpacity, bottomOpacity) * displayAbleVer);
+
+    vec4 colorTex = texture (texture, v_uv0);
+    gl_FragColor = colorTex * vec4 (1.0, 1.0, 1.0, opacityMax) * v_color;
+  }
+}%
+  

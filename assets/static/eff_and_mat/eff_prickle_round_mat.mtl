@@ -1,0 +1,19 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_prickle_round_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "4651b3f7-b73a-4157-837b-6264cfa3e23a"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "prickleCount": 8,
+        "prickleLen": 0.2
+      }
+    }
+  }
+}

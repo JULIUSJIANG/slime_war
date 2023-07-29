@@ -1,0 +1,84 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "ch_temp_bubble_b_keep",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.6,
+  "sample": 100,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "paths": {
+      "code_rotation/anim_x_y/anim_hand_left_x_y": {
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": 20
+            },
+            {
+              "frame": 0.6,
+              "value": 20
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": -8
+            },
+            {
+              "frame": 0.6,
+              "value": -8
+            }
+          ]
+        }
+      },
+      "anim_hand_right_active": {
+        "props": {
+          "active": [
+            {
+              "frame": 0,
+              "value": true
+            }
+          ]
+        }
+      },
+      "code_rotation/anim_x_y/anim_equip_x_y_rotation": {
+        "comps": {},
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": 15
+            },
+            {
+              "frame": 0.6,
+              "value": 15
+            }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": -10
+            },
+            {
+              "frame": 0.6,
+              "value": -10
+            }
+          ],
+          "angle": [
+            {
+              "frame": 0,
+              "value": -45
+            },
+            {
+              "frame": 0.6,
+              "value": -60
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}

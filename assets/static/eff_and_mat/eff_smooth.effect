@@ -1,0 +1,160 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
+/*
+效果：平滑
+注意事项：  
+  1. 图片要先设置为邻近采样
+
+缺点：
+  1. 一旦左上、右下分为 1 类，右上、左下分为 1 类，那么对角互相平滑，而互相平滑的格点效果是完全不对的
+  2. 轮廓边缘有刀片状凸起
+*/
+
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        textureWidth: { value: 1.0 }
+        textureHeight: { value: 1.0 }
+        alphaThreshold: { value: 0.5 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+    pos = cc_matViewProj * pos;
+    v_uv0 = a_uv0;
+    v_color = a_color;
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  // 接收外部变量
+  uniform EffSmooth {
+    // 宽度
+    float textureWidth;
+    // 高度
+    float textureHeight;
+  };
+
+  // 俩颜色距离在该值以内的话，认为是等价的
+  #define THRESHOLD 0.1
+
+  // 抗锯齿缩放，值越小越模糊
+  #define AA_SCALE 10.0
+
+  // 判断用的厚度
+  #define TICKNESS_JUDGE 0.4
+
+  // 判断通过后采纳的厚度
+  #define TICKNESS_APPLY 0.3
+
+  // 通过像素位置对纹理进行取样
+  vec4 texelFetch (vec2 texelFetch_uv) {
+    vec2 pos = texelFetch_uv * vec2 (1.0 / textureWidth, 1.0 / textureHeight);
+    if (pos.x < 0.0 || pos.y < 0.0) {
+      return vec4 (0, 0, 0, 0);
+    };
+    return texture2D (texture, pos);
+  }
+
+  // 如果在阈值内，绘制连接 2 个像素的对角线
+  bool diag (inout vec4 sum, vec2 uv, vec2 p1, vec2 p2, float tickness) {
+    // 采样 p1
+    vec4 v1 = texelFetch (uv + p1);
+    // 采样 p2
+    vec4 v2 = texelFetch (uv + p2);
+    // p1、p2 颜色一致
+    if (length (v1 - v2) < THRESHOLD) {
+      // 向量：p1 -> p2
+    	vec2 dir = p2 - p1;
+      // 向量：p1 -> p2 顺时针旋转 90 度
+      dir = normalize (vec2 (dir.y, -dir.x));
+      // 向量：p1 像素点中心 -> uv
+      vec2 lp = uv - (floor (uv + p1) + 0.5);
+      // lp 在 dir 上的投影，取值 0 - 1.4142135623730951；
+      float shadow = dot (lp, dir);
+      // 越靠内权重 l 越大
+      float l = clamp ((tickness - shadow) * AA_SCALE, 0.0, 1.0);
+      // 根据权重，进行取色
+      sum = mix (sum, v1, l); 
+    	return true;
+    };
+    return false;
+  }
+
+  // 核心函数
+  vec4 mainImage (in vec2 fragCoord)
+  {
+    // 采样位置
+    vec2 ip = fragCoord;
+
+    // 以最近像素作为背景
+    vec4 s = texelFetch (ip);
+
+    // 将周围像素的抗锯齿对角线绘制为前景
+
+    // 如果左、上连上了
+    if (diag (s, ip, vec2 (-1, 0), vec2 (0, 1), TICKNESS_JUDGE)) { 
+        // 尝试连接左、右上
+        diag (s, ip, vec2 (-1, 0), vec2 (1, 1), TICKNESS_APPLY);
+        // 尝试连接左下、右
+        diag (s, ip, vec2 (-1,-1), vec2 (0, 1), TICKNESS_APPLY);
+    };
+    // 如果右、上连上了
+    if (diag (s, ip, vec2 (0, 1), vec2 (1, 0), TICKNESS_JUDGE)) {
+        diag (s, ip, vec2 (0, 1), vec2 (1, -1), TICKNESS_APPLY);
+        diag (s, ip, vec2 (-1, 1), vec2 (1, 0), TICKNESS_APPLY);
+    };
+    // 如果右、下连上了
+    if (diag (s, ip, vec2 (1, 0), vec2 (0, -1), TICKNESS_JUDGE)) { 
+        diag (s, ip, vec2 (1, 0), vec2 (-1, -1), TICKNESS_APPLY);
+        diag (s, ip, vec2 (1, 1), vec2 (0, -1), TICKNESS_APPLY);
+    };
+    // 如果左、下连上了
+    if (diag (s, ip, vec2 (0, -1), vec2 (-1, 0), TICKNESS_JUDGE)) {
+     	  diag (s, ip, vec2 (0, -1), vec2 (-1, 1), TICKNESS_APPLY);
+        diag (s, ip, vec2 (1, -1), vec2 (-1, 0), TICKNESS_APPLY);
+    };
+
+    return s;
+  }
+
+  void main () {
+    gl_FragColor = mainImage (v_uv0 * vec2 (textureWidth, textureHeight)) * v_color;
+  }
+
+}%

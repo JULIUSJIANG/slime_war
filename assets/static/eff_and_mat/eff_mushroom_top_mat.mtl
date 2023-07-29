@@ -1,0 +1,15 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_mushroom_top_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "c8443db1-1e9a-47dc-a252-0d2832580950"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {}
+    }
+  }
+}

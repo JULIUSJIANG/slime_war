@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "db184780-38e2-4967-b2a1-a86eeb3bb9e9",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 200,
+  "height": 160,
+  "platformSettings": {},
+  "subMetas": {
+    "ch_16_fresnel_size_3_act_3": {
+      "ver": "1.0.6",
+      "uuid": "cf429de1-be97-4eb6-8b5f-c1a0a9ab47a8",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "db184780-38e2-4967-b2a1-a86eeb3bb9e9",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 200,
+      "height": 160,
+      "rawWidth": 200,
+      "rawHeight": 160,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

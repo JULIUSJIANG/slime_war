@@ -1,0 +1,20 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_fog_ball_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "cbe4c30b-f5b9-43b9-bf10-fbe503ca0bec"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "textureNoise": {
+          "__uuid__": "2f3c1e25-cba8-4683-9afc-83faeae84bb6"
+        }
+      }
+    }
+  }
+}

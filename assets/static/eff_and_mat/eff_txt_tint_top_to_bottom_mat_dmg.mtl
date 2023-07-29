@@ -1,0 +1,31 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_txt_tint_top_to_bottom_mat_dmg",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "e3c80ec2-73c5-4f74-9291-19f48b573825"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "tintStarColor": {
+          "__type__": "cc.Color",
+          "r": 255,
+          "g": 179,
+          "b": 0,
+          "a": 255
+        },
+        "tintEndColor": {
+          "__type__": "cc.Color",
+          "r": 255,
+          "g": 0,
+          "b": 0,
+          "a": 255
+        }
+      }
+    }
+  }
+}

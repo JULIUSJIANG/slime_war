@@ -1,0 +1,20 @@
+{
+  "__type__": "cc.Material",
+  "_name": "eff_glass_mat",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "c867b5ef-f43e-4c6d-b0d4-651b450cf02e"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {},
+      "props": {
+        "circle": 4000,
+        "totalTrace": 6,
+        "width": 1
+      }
+    }
+  }
+}
