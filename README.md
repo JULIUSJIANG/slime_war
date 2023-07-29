@@ -4,6 +4,7 @@
 ## 游戏介绍
 
 该游戏主要玩法是，玩家通过瞄准、抛射弹药来攻击，通过格挡伤害来防守，因为 h5 下没有接入激励视频组件，所以 h5 下所有激励视频奖励点击的话直接触发，h5 版本体验地址：
+
 https://juliusjiang.github.io/slime_war/build/web-desktop/
 
 ![detail_宣传图1](https://github.com/JULIUSJIANG/slime_war/assets/33363444/8270430b-c078-4982-937f-811c1cbf02a6)
